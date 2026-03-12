@@ -1,0 +1,21 @@
+# Portfolio Maker - Requirements
+# Generato automaticamente per il progetto "I Tonani"
+# Installazione: pip install -r requirements.txt
+
+# --- Backend Core ---
+flask==3.1.0
+flask-login==0.6.3
+flask-sqlalchemy==3.1.1
+flask-wtf==1.2.2
+
+# --- Database ---
+# SQLite è incluso nella standard library di Python, nessun pacchetto extra necessario
+
+# --- Sicurezza & Auth ---
+werkzeug==3.1.3
+bcrypt==4.2.1
+PyJWT==2.10.1
+
+# --- Utility ---
+python-dotenv==1.0.1
+pillow==11.1.0
