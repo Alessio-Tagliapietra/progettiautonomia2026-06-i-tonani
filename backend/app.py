@@ -24,8 +24,9 @@ def load_user(user_id):
 
 from routes import routes_bp
 from auth import auth_bp
-app.register_blueprint(routes_bp)
-app.register_blueprint(auth_bp)
+app.register_blueprint(routes_bp, url_prefix= "/api")
+app.register_blueprint(auth_bp, url_prefix= "/auth")
+
 
 if __name__ == '__main__':
     with app.app_context():
