@@ -2,7 +2,10 @@ from flask import Blueprint, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from models import db, User
 import bcrypt
-
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @auth_bp.route('/register', methods=['POST'])
@@ -33,16 +36,16 @@ def login():
     if not user or not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
         return jsonify({'error': 'Credenziali non valide'}), 401
 
-    login_user(user)
-    return jsonify({'message': f'Benvenuto {nick}!'}), 200
+    access_token = create_access_token(identity=nick)
+    return jsonify(access_token=access_token)
 
 @auth_bp.route('/logout', methods=['POST'])
-@login_required
+@jwt_required()
 def logout():
     logout_user()
     return jsonify({'message': 'Logout effettuato'}), 200
 
 @auth_bp.route('/me', methods=['GET'])
-@login_required
+@jwt_required()
 def me():
     return jsonify({'nick': current_user.nick, 'email': current_user.email}), 200

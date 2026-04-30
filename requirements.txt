@@ -7,7 +7,7 @@ flask==3.1.0
 flask-login==0.6.3
 flask-sqlalchemy==3.1.1
 flask-wtf==1.2.2
-
+Flask-JWT-Extended==4.7.1
 # --- Database ---
 # SQLite è incluso nella standard library di Python, nessun pacchetto extra necessario
 

@@ -4,7 +4,10 @@ from models import db, Post, Like, User
 import base64
 from PIL import Image
 import io
-
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager
 routes_bp = Blueprint('routes', __name__, url_prefix='/api')
 
 # --- FEED HOME: ultimi post ---
@@ -25,7 +28,7 @@ def feed():
 
 # --- UPLOAD POST ---
 @routes_bp.route('/post', methods=['POST'])
-@login_required
+@jwt_required()
 def upload_post():
     if 'image' not in request.files:
         return jsonify({'error': 'Nessuna immagine caricata'}), 400
@@ -49,7 +52,7 @@ def upload_post():
 
 # --- ELIMINA POST ---
 @routes_bp.route('/post/<int:post_id>', methods=['DELETE'])
-@login_required
+@jwt_required()
 def delete_post(post_id):
     post = Post.query.get_or_404(post_id)
     if post.usersNick != current_user.nick:
@@ -60,7 +63,7 @@ def delete_post(post_id):
 
 # --- LIKE / UNLIKE ---
 @routes_bp.route('/post/<int:post_id>/like', methods=['POST'])
-@login_required
+@jwt_required()
 def toggle_like(post_id):
     existing = Like.query.filter_by(
         Users_nick=current_user.nick,
