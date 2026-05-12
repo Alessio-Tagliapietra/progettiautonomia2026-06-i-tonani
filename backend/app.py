@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from dotenv import load_dotenv
@@ -11,7 +11,12 @@ from flask_jwt_extended import get_jwt
 from models import db, User, TokenBlocklist
 load_dotenv()
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    template_folder='../frontend',
+    static_folder='../frontend',
+    static_url_path=''
+)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///portfolio.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -42,6 +47,9 @@ from auth import auth_bp
 app.register_blueprint(routes_bp, url_prefix= "/api")
 app.register_blueprint(auth_bp, url_prefix= "/auth")
 
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 if __name__ == '__main__':
     with app.app_context():
