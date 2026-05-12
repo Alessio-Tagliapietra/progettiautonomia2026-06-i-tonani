@@ -19,3 +19,4 @@ PyJWT==2.10.1
 # --- Utility ---
 python-dotenv==1.0.1
 pillow==11.1.0
+flask_cors==6.0.2
