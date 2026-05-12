@@ -7,7 +7,8 @@ from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
-
+from flask_jwt_extended import get_jwt
+from models import db, User, TokenBlocklist
 load_dotenv()
 
 app = Flask(__name__)
@@ -25,8 +26,15 @@ db.init_app(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'auth.login'
 
+@jwt.token_in_blocklist_loader
+def check_if_token_revoked(jwt_header, jwt_payload):
+    jti = jwt_payload["jti"]
+    token = db.session.query(TokenBlocklist.id).filter_by(jti=jti).scalar()
+    return token is not None
+
 @login_manager.user_loader
 def load_user(user_id):
+
     return User.query.get(user_id)
 
 from routes import routes_bp

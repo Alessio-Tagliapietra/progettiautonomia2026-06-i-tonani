@@ -30,3 +30,10 @@ class Like(db.Model):
     __tablename__ = 'Likes'
     Users_nick   = db.Column(db.String(20), db.ForeignKey('Users.nick'), primary_key=True)
     Post_idPost  = db.Column(db.Integer, db.ForeignKey('Post.idPost'), primary_key=True)
+
+class TokenBlocklist(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    jti = db.Column(db.String(36), nullable=False, index=True, unique=True)
+    token_type = db.Column(db.String(16), nullable=False)
+    user_nick = db.Column(db.String(80), nullable=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))

@@ -1,12 +1,15 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
-from models import db, User
+from models import db, User,TokenBlocklist
 import bcrypt
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
+from flask_jwt_extended import get_jwt
+
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
+
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
@@ -39,13 +42,31 @@ def login():
     access_token = create_access_token(identity=nick)
     return jsonify(access_token=access_token)
 
+
 @auth_bp.route('/logout', methods=['POST'])
 @jwt_required()
 def logout():
-    logout_user()
-    return jsonify({'message': 'Logout effettuato'}), 200
+    token = get_jwt()
+    jti = token["jti"]
+    ttype = token["type"]
+    nick = get_jwt_identity()
+
+    db.session.add(TokenBlocklist(
+        jti=jti,
+        token_type=ttype,
+        user_nick=nick
+    ))
+    db.session.commit()
+
+    return jsonify({"message": "Logout effettuato"}), 200
 
 @auth_bp.route('/me', methods=['GET'])
 @jwt_required()
 def me():
-    return jsonify({'nick': current_user.nick, 'email': current_user.email}), 200
+    nick = get_jwt_identity()
+    user = User.query.get(nick)
+
+    if not user:
+        return jsonify({'error': 'Utente non trovato'}), 404
+
+    return jsonify({'nick': user.nick, 'email': user.email}), 200

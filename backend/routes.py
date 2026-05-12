@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
-from models import db, Post, Like, User
+from models import db, Post, Like, User, TokenBlocklist
 import base64
 from PIL import Image
 import io
