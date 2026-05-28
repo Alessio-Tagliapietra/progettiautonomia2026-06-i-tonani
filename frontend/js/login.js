@@ -20,7 +20,7 @@ async function handleLogin(e) {
   const res = await api.login(nick, password);
   if (res.ok) {
     // token già salvato in api.js → redirect
-    window.location.href = 'index.html';
+    window.location.href = '/';
   } else {
     errEl.textContent = res.data.error || 'Credenziali non valide';
     errEl.classList.remove('d-none');
